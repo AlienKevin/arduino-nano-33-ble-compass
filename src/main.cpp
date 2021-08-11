@@ -2,28 +2,33 @@
  * A compass direction is calculated from the magnetic readings X and Y of the LSM9DS1 chip.
  * A higher value of maxcount increases accuracy but slows the measurement cycle. 
  * The compass must be calibrated for the magnetic disturbance of the environment.
- * A push button should be connected between D3 (buttonpin) and GND.
- * The onboard led connected to D13 is used as indicator. 
- * Keep the button pressed till the led goes ON 
- * Releasing it starts the calibration indicated by the fast flashing led.
+ * The onboard led connected to D13 is used as indicator during calibration. 
+ * At the start, you will be asked whether to calibrate or not, if you haven't set offsetX and offsetY
+ * produced by last calibration. If you reply yes to calibration request, the orange onboard LED will
+ * flash fast during calibration, which lasts 15 seconds.
  * During calibration the board must at least be turned over a full 360 deg. 
- * To finish push the button again. This stores the values and restarts the compass with the new value. 
- * The printed offsetvalues can be used in the program as initial values of offsetX and offsetY 
+ * Calibration automatically finishes when the LED stops flashing. Then, newly obtained offsetX and offsetY
+ * are stored and the compass is restarted with the new offsets.
+ * The printed offset values can be used in the program as initial values of offsetX and offsetY 
  * see https://forum.arduino.cc/t/digital-compass-with-nano-ble-33-sense/640308/25
- * Written by Femme Verbeek 2020 for educational purposes 
+ * Written by Femme Verbeek 2020 for educational purposes
+ * Adopted to Platformio and removed the need for a button to calibrate IMU by Kevin Li in 2021.
 */
 
 #include <Arduino_LSM9DS1.h>
 #define ledpin 13
 
 void calibrate();
-String read_line();
+String readLine();
 
+/***************************************** START OF USER CONFIGURATIONS *****************************************/
 // Modify these offset numbers at will with the outcome of the calibration values
 float offsetX = 0;
 float offsetY = 0;
 const int maxcount = 40; //higher number = more accurate but slower
-bool already_asked_to_calibrate = false;
+/***************************************** END OF USER CONFIGURATIONS *****************************************/
+
+bool hasAskedToCalibrate = false;
 
 void setup()
 {
@@ -41,18 +46,18 @@ void setup()
 
 void loop()
 {
-    while (offsetX == 0 && offsetY == 0 && !already_asked_to_calibrate)
+    while (offsetX == 0 && offsetY == 0 && !hasAskedToCalibrate)
     {
         Serial.print("Do you want to calibrate the IMU? (y/n): ");
-        String response = read_line();
+        String response = readLine();
         if (response == "y" || response == "yes")
         {
             calibrate();
-            already_asked_to_calibrate = true;
+            hasAskedToCalibrate = true;
         }
         else if (response == "n" || response == "no")
         {
-            already_asked_to_calibrate = true;
+            hasAskedToCalibrate = true;
         }
     }
     float x, y, z;
@@ -107,7 +112,7 @@ void calibrate()
     Serial.println(offsetY);
 }
 
-String read_line()
+String readLine()
 {
     String line = "";
     while (1)
