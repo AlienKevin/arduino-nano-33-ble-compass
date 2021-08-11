@@ -9,7 +9,7 @@
  * During calibration the board must at least be turned over a full 360 deg. 
  * To finish push the button again. This stores the values and restarts the compass with the new value. 
  * The printed offsetvalues can be used in the program as initial values of offsetX and offsetY 
- * see https://forum.arduino.cc/index.php?topic=668641.0
+ * see https://forum.arduino.cc/t/digital-compass-with-nano-ble-33-sense/640308/25
  * Written by Femme Verbeek 2020 for educational purposes 
 */
 
