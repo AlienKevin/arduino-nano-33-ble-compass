@@ -1,6 +1,6 @@
 /* Compass example for the Nano 33 BLE Sense
  * A compass direction is calculated from the magnetic readings X and Y of the LSM9DS1 chip.
- * A higher value of maxcount increases accuracy but slows the measurement cycle. 
+ * A higher value of maxCount increases accuracy but slows the measurement cycle. 
  * The compass must be calibrated for the magnetic disturbance of the environment.
  * The onboard led connected to D13 is used as indicator during calibration. 
  * At the start, you will be asked whether to calibrate or not, if you haven't set offsetX and offsetY
